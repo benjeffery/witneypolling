@@ -209,7 +209,7 @@ polls:
             `).join('');
 
             pollBox.innerHTML = `
-                <h3><a href="${poll.link}" target="_blank">${poll.pollster}</a></h3>
+                <h3 style="display: inline;">${poll.pollster}</h3> - <a href="${poll.link}" target="_blank">source</a>
                 <p>${poll.fieldwork} (${daysAgo} days ago)</p>
                 <div class="visualization">
                     ${visualizationHtml}
@@ -235,7 +235,7 @@ polls:
             `).join('');
 
             pollBox.innerHTML = `
-                <h3><a href="${poll.link}" target="_blank">${poll.pollster}</a></h3>
+            <h3 style="display: inline;">${poll.pollster}</h3> - <a href="${poll.link}" target="_blank">source</a>
                 <div class="visualization">
                     ${visualizationHtml}
                 </div>
