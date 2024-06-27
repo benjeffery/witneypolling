@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Witney Constituency Election Predictions</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/js-yaml/4.1.0/js-yaml.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/date-fns@3.6.0/cdn.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f4f4f4;
+        }
+        h1 {
+            text-align: center;
+            color: #2c3e50;
+        }
+        .poll-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: flex-start;
+            
+        }
+        .poll-box {
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin: 10px 10px;
+            padding: 10px;
+            width: calc(100% - 60px);
+            max-width: 500px;
+        }
+        @media (min-width: 1024px) {
+            .poll-box {
+                width: calc(50% - 60px);
+            }
+        }
+        .poll-box h3 {
+            margin-top: 0;
+            margin-bottom: 5px;
+            color: #3498db;
+        }
+        .poll-box p {
+            margin: 5px 0;
+        }
+        .poll-box a {
+            color: #3498db;
+            text-decoration: none;
+        }
+        .poll-box a:hover {
+            text-decoration: underline;
+        }
+        .visualization {
+            margin: 0px 0;
+        }
+        .bar-container {
+            display: flex;
+            align-items: center;
+            margin-bottom: 0px;
+        }
+        .bar {
+            height: 15px;
+            transition: width 0.3s ease;
+        }
+        .bar-label {
+            margin-left: 10px;
+            white-space: nowrap;
+        }
+    </style>
+</head>
+<body>
+    <h1>Witney Constituency 2024 Predictions</h1>
+    <p>Last update: 26th June</p>
+    <h2>
+        Poll based models
+    </h2>
+    <div id="agg-container" class="poll-container"></div>
+    <h2>
+        Individual <a href="https://en.wikipedia.org/wiki/Multilevel_regression_with_poststratification">MRP</a> polls
+    </h2>
+    <div id="poll-container" class="poll-container"></div>
+
+    <script type="application/yaml" id="pollData">
+aggs:
+  - pollster: "Financial Times"
+    link: "https://ig.ft.com/uk-general-election/2024/projection/?constituency=E14001591"
+    results:
+      Conservative: 31.3
+      Labour: 19.5
+      Liberal Democrat: 31.1
+      Green: 1.2
+      Reform: 15.7
+  - pollster: "Economist"
+    link: "https://www.economist.com/interactive/uk-general-election/forecast"
+    results:
+      Conservative: 31
+      Labour: 21
+      Liberal Democrat: 30
+      Green: 4
+      Reform: 13
+  - pollster: "Electoral Calculus"
+    link: "https://electoralcalculus.co.uk/prediction_main.html"
+    results:
+      Conservative: 37.4
+      Labour: 19.1
+      Liberal Democrat: 28.0
+      Green: 3.4
+      Reform: 12.0
+  - pollster: "Britain Predicts"
+    link: "https://sotn.newstatesman.com/2024/05/britainpredicts"
+    results:
+      Conservative: 35.9
+      Labour: 18.6
+      Liberal Democrat: 31.7
+      Green: 4.9
+      Reform: 8.5
+polls:
+  - pollster: "WeThink"
+    link: "https://wethink.report/news-hub/news/we-think-mrp-historical-low-for-the-conservatives/"
+    fieldwork: "2024-05-30 to 2024-06-21"
+    results:
+      Conservative: 29.1
+      Labour: 15.0
+      Liberal Democrat: 41.5
+      Green: 2.3
+      Reform: 11.4
+  - pollster: "Focaldata"
+    link: "https://www.focaldata.com/blog/focaldata-prolific-uk-general-election-mrp"
+    fieldwork: "2024-06-04 to 2024-06-20"
+    results:
+      Conservative: 34.1
+      Labour: 21.3
+      Liberal Democrat: 25.5
+      Green: 3.7
+      Reform: 15.1
+  - pollster: "YouGov"
+    link: "https://yougov.co.uk/elections/uk/2024"
+    fieldwork: "2024-06-11 to 2024-06-18"
+    results:
+      Conservative: 30.5
+      Labour: 15.6
+      Liberal Democrat: 37.8
+      Green: 2.1
+      Reform: 13.4
+  - pollster: "Savanta"
+    link: "https://savanta.com/knowledge-centre/press-and-polls/mrp-model-daily-telegraph-19-june-2024/"
+    fieldwork: "2024-06-07 to 2024-06-18"
+    results:
+      Conservative: 31.7
+      Labour: 26.5
+      Liberal Democrat: 27.0
+      Green: 2.6
+      Reform: 12.0
+  - pollster: "IPSOS"
+    link: "https://www.ipsos.com/en-uk/uk-opinion-polls/ipsos-election-mrp"
+    fieldwork: "2024-06-07 to 2024-06-12"
+    results:
+      Conservative: 33
+      Labour: 19
+      Liberal Democrat: 31
+      Green: 3
+      Reform: 13
+  - pollster: "Survation"
+    link: "https://savanta.com/knowledge-centre/press-and-polls/mrp-model-daily-telegraph-19-june-2024/"
+    fieldwork: "2024-05-31 to 2024-06-13"
+    results:
+      Conservative: 28.5
+      Labour: 24.1
+      Liberal Democrat: 38.3
+      Green: 0.7
+      Reform: 7.3
+    </script>
+
+    <script>
+        const partyColors = {
+            Conservative: '#0087DC',
+            Labour: '#DC241f',
+            'Liberal Democrat': '#FDBB30',
+            Green: '#6AB023',
+            Reform: '#00B1DA',
+        };
+
+        const yamlText = document.getElementById('pollData').textContent;
+        const polls = jsyaml.load(yamlText).polls;
+        const pollContainer = document.getElementById('poll-container');
+
+        polls.forEach(poll => {
+            const pollBox = document.createElement('div');
+            pollBox.className = 'poll-box';
+
+            const endDate = dateFns.parse(poll.fieldwork.split(' to ')[1], 'yyyy-MM-dd', new Date());
+            const daysAgo = dateFns.differenceInDays(new Date(), endDate);
+
+            const sortedResults = Object.entries(poll.results).sort((a, b) => b[1] - a[1]);
+
+            const visualizationHtml = sortedResults.map(([party, percentage]) => `
+                <div class="bar-container">
+                    <div class="bar" style="width: ${percentage}%; background-color: ${partyColors[party]};"></div>
+                    <span class="bar-label">${party}: ${percentage}%</span>
+                </div>
+            `).join('');
+
+            pollBox.innerHTML = `
+                <h3><a href="${poll.link}" target="_blank">${poll.pollster}</a></h3>
+                <p>${poll.fieldwork} (${daysAgo} days ago)</p>
+                <div class="visualization">
+                    ${visualizationHtml}
+                </div>
+            `;
+
+            pollContainer.appendChild(pollBox);
+        });
+
+        const aggs = jsyaml.load(yamlText).aggs;
+        const aggContainer = document.getElementById('agg-container');
+        aggs.forEach(poll => {
+            const pollBox = document.createElement('div');
+            pollBox.className = 'poll-box';
+
+            const sortedResults = Object.entries(poll.results).sort((a, b) => b[1] - a[1]);
+
+            const visualizationHtml = sortedResults.map(([party, percentage]) => `
+                <div class="bar-container">
+                    <div class="bar" style="width: ${percentage}%; background-color: ${partyColors[party]};"></div>
+                    <span class="bar-label">${party}: ${percentage}%</span>
+                </div>
+            `).join('');
+
+            pollBox.innerHTML = `
+                <h3><a href="${poll.link}" target="_blank">${poll.pollster}</a></h3>
+                <div class="visualization">
+                    ${visualizationHtml}
+                </div>
+            `;
+
+            aggContainer.appendChild(pollBox);
+        });
+
+    </script>
+</body>
+</html>
