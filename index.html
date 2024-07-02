@@ -118,6 +118,15 @@ aggs:
       Lib Dem: 29
       Green: 4
       Reform: 14
+  - pollster: "ElectionMaps"
+    link: "https://electionmaps.uk/nowcast"
+    date: "2024-07-01"
+    results:
+      Con: 28.8
+      Lab: 18.3
+      Lib Dem: 32.8
+      Green: 3.4
+      Reform: 16.1
   - pollster: "Electoral Calculus"
     link: "https://www.electoralcalculus.co.uk/fcgi-bin/calcwork23.py?seat=Witney"
     date: "2024-07-01"
@@ -127,15 +136,6 @@ aggs:
       Lib Dem: 37.5
       Green: 3.3
       Reform: 14.6
-  - pollster: "ElectionMaps"
-    link: "https://electionmaps.uk/nowcast"
-    date: "2024-06-30"
-    results:
-      Con: 28.1
-      Lab: 18.5
-      Lib Dem: 33.2
-      Green: 3.4
-      Reform: 16.2
   - pollster: "Britain Predicts"
     link: "https://sotn.newstatesman.com/2024/05/britainpredicts"
     date: "2024-06-29"
@@ -252,7 +252,7 @@ polls:
             `).join('');
 
             pollBox.innerHTML = `
-                <h3 style="display: inline;">${poll.pollster}</h3> - <a href="${poll.link}" target="_blank">source</a>
+                <h3 style="display: inline;">${poll.pollster}</h3> - <a href="${poll.link}">source</a>
                 <p>${poll.fieldwork} (${daysAgo} day${daysAgo !== 1 ? 's' : ''} ago)</p>
                 <div class="visualization">
                     ${visualizationHtml}
@@ -282,7 +282,7 @@ polls:
             `).join('');
 
             pollBox.innerHTML = `
-            <h3 style="display: inline;">${poll.pollster}</h3> - <a href="${poll.link}" target="_blank">source</a>
+            <h3 style="display: inline;">${poll.pollster}</h3> - <a href="${poll.link}">source</a>
                 <p>${poll.date} (${daysAgo} day${daysAgo !== 1 ? 's' : ''} ago)</p>
                 <div class="visualization">
                     ${visualizationHtml}
